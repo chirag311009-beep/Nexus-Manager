@@ -1,0 +1,2873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="NEXUS CYBER — next-gen college management system with student records, attendance, marks, notices, fees & hardened local recovery">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;">
+<title>NEXUS CYBER | Neural Campus Protocol</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg: #000000;
+  --bg2: #08080c;
+  --panel: rgba(12, 12, 18, 0.92);
+  --panel-solid: #0c0c12;
+  --panel2: rgba(16, 16, 22, 0.95);
+  --line: rgba(255, 255, 255, 0.10);
+  --line-bright: rgba(255, 255, 255, 0.28);
+  --text: #f5f5f8;
+  --muted: #8a8a9a;
+  --neon: #ffffff;
+  --neon2: #e8e8f0;
+  --neon3: #d0d0d8;
+  --accent: #ffffff;
+  --accent2: #c8c8d0;
+  --red: #ff6b7a;
+  --green: #9ae6b4;
+  --orange: #e0c080;
+  --glow: 0 0 12px rgba(255,255,255,.45), 0 0 32px rgba(255,255,255,.12);
+  --glow-soft: 0 0 20px rgba(255,255,255,.2);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+  --shadow: 0 20px 50px rgba(0,0,0,.7);
+  --font-display: 'Fredoka', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--bg);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.55;
+}
+
+/* ===== ANIMATED BACKGROUND ===== */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 75%);
+  animation: gridPulse 8s ease-in-out infinite;
+}
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.bg-orbs {
+  position: absolute;
+  inset: 0;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: orbFloat 20s ease-in-out infinite;
+}
+.orb-1 {
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12), transparent 70%);
+  top: -15%; left: 20%;
+}
+.orb-2 {
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.07), transparent 70%);
+  bottom: 10%; right: -5%;
+  animation-delay: -7s;
+}
+.orb-3 {
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 70%);
+  top: 40%; left: -8%;
+  animation-delay: -14s;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+.scanline {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.025) 3px,
+    rgba(255, 255, 255, 0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+.bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(3, 5, 10, 0.7) 100%);
+}
+
+/* ===== TOP BAR ===== */
+.top {
+  height: 64px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(20px) saturate(1.2);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 8px 32px rgba(0,0,0,.5);
+}
+.logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 0 14px rgba(255,255,255,.5), 0 0 28px rgba(255,255,255,.15);
+}
+.logo::before {
+  content: "◈";
+  font-size: 20px;
+  color: #fff;
+  filter: drop-shadow(0 0 10px #fff);
+  animation: logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%, 100% { filter: drop-shadow(0 0 8px #fff); opacity: 1; }
+  50% { filter: drop-shadow(0 0 18px #fff); opacity: 0.85; }
+}
+.logo span {
+  color: rgba(255,255,255,.6);
+  font-weight: 600;
+}
+.status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px #fff, 0 0 22px rgba(255,255,255,.4);
+  animation: pulse 1.8s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ===== LAYOUT ===== */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 2;
+}
+.hero {
+  text-align: center;
+  padding: 64px 0 48px;
+  position: relative;
+}
+.eyebrow {
+  font-family: var(--font-display);
+  color: #fff;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 18px;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  box-shadow: 0 0 20px rgba(255,255,255,.08), inset 0 0 12px rgba(255,255,255,.04);
+}
+.eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px #fff;
+  animation: pulse 1.5s infinite;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 6vw, 58px);
+  margin: 20px 0 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow:
+    0 0 2px #fff,
+    0 3px 0 rgba(0,0,0,.4),
+    0 0 24px rgba(255,255,255,.4),
+    0 0 48px rgba(255,255,255,.15);
+}
+.hero p {
+  color: var(--muted);
+  max-width: 580px;
+  margin: auto;
+  line-height: 1.7;
+  font-size: 16px;
+  font-weight: 500;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 880px;
+  margin: 48px auto;
+}
+.card {
+  background: linear-gradient(165deg, rgba(18,18,26,.95), rgba(8,8,12,.98));
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 20px 50px rgba(0,0,0,.6);
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  opacity: 0.5;
+}
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle at 80% 20%, rgba(255,255,255,.05), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.28s;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.01);
+  border-color: rgba(255,255,255,.28);
+  box-shadow: 0 0 36px rgba(255,255,255,.1), 0 24px 60px rgba(0,0,0,.7);
+}
+.card:hover::after { opacity: 1; }
+.icon {
+  font-size: 34px;
+  line-height: 1;
+  color: #fff;
+  filter: drop-shadow(0 0 12px #fff);
+  margin-bottom: 4px;
+}
+.card h2 {
+  margin: 14px 0 8px;
+  font-size: 20px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 0 16px rgba(255,255,255,.3);
+}
+.card p {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 15px;
+  margin: 0 0 24px;
+  font-weight: 500;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  color: #000;
+  background: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  box-shadow: 0 0 20px rgba(255,255,255,.35), 0 4px 0 rgba(0,0,0,.15);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.btn:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 0 32px rgba(255,255,255,.55), 0 4px 0 rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 16px rgba(255,255,255,.3), 0 1px 0 rgba(0,0,0,.2);
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+.btn.secondary {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,.35);
+  box-shadow: 0 0 12px rgba(255,255,255,.08);
+}
+.btn.secondary:hover {
+  background: rgba(255,255,255,.08);
+  border-color: #fff;
+  box-shadow: 0 0 20px rgba(255,255,255,.2);
+  color: #fff;
+}
+.btn.danger {
+  background: transparent;
+  color: var(--red);
+  border: 1.5px solid rgba(255,107,122,.4);
+  box-shadow: none;
+}
+.btn.danger:hover {
+  background: rgba(255,107,122,.1);
+  border-color: var(--red);
+}
+.btn.green {
+  background: transparent;
+  color: #ddd;
+  border: 1.5px solid #444;
+  box-shadow: none;
+}
+.btn.green:hover {
+  background: rgba(255,255,255,.08);
+  border-color: #fff;
+  color: #fff;
+}
+.btn.purple {
+  background: transparent;
+  color: #ccc;
+  border: 1.5px solid #444;
+  box-shadow: none;
+}
+.btn.orange {
+  background: transparent;
+  color: #bbb;
+  border: 1.5px solid #444;
+  box-shadow: none;
+}
+.btn.orange:hover {
+  background: rgba(255,255,255,.08);
+  border-color: #fff;
+  color: #fff;
+}
+.btn.sm {
+  padding: 8px 14px;
+  font-size: 12px;
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid transparent;
+  box-shadow: none;
+}
+.btn.ghost:hover {
+  color: var(--text);
+  border-color: #444;
+}
+
+/* ===== FORMS ===== */
+.hidden { display: none !important; }
+.screen { min-height: calc(100vh - 64px); position: relative; z-index: 2; }
+.login { max-width: 440px; margin: 56px auto; }
+.panel {
+  background: rgba(12,12,18,.94);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius);
+  padding: 30px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 24px 64px rgba(0,0,0,.7);
+  position: relative;
+}
+.panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  opacity: 0.45;
+}
+.panel h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 0 16px rgba(255,255,255,.3);
+}
+.panel > p {
+  color: var(--muted);
+  font-size: 15px;
+  margin: 0 0 20px;
+  font-weight: 500;
+}
+.field { margin: 14px 0; }
+.field label {
+  display: block;
+  color: #999;
+  font-size: 11px;
+  margin-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #333;
+  background: #08080c;
+  color: #fff;
+  outline: none;
+  transition: all 0.18s;
+  font-size: 14px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  color-scheme: dark;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: rgba(255,255,255,.5);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.08), 0 0 20px rgba(255,255,255,.06);
+}
+.field textarea { min-height: 90px; resize: vertical; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  align-items: center;
+}
+.msg {
+  font-size: 13px;
+  color: var(--red);
+  min-height: 18px;
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+.msg.ok { color: var(--green); }
+.hint {
+  font-size: 13px;
+  color: #5a7090;
+  margin-top: 18px;
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 64px);
+  position: relative;
+  z-index: 2;
+}
+.side {
+  border-right: 1px solid rgba(255,255,255,.08);
+  padding: 18px 12px;
+  background: rgba(6,6,10,.98);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.side .nav-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: #555;
+  letter-spacing: 0.14em;
+  padding: 14px 12px 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.side button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: #888;
+  border: 0;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  transition: all 0.18s;
+  border-left: 3px solid transparent;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+.side button.active,
+.side button:hover {
+  background: rgba(255,255,255,.07);
+  color: #fff;
+  border-left-color: #fff;
+  box-shadow: inset 0 0 24px rgba(255,255,255,.04);
+}
+.side .logout-wrap {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.main {
+  padding: 28px 26px;
+  overflow: auto;
+}
+.titlebar {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.titlebar h2 {
+  margin: 0;
+  font-size: 22px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 0 14px rgba(255,255,255,.25);
+}
+.titlebar small {
+  color: var(--muted);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+/* ===== STATS ===== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.stat {
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius);
+  background: rgba(12,12,18,.95);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.stat:hover {
+  border-color: rgba(255,255,255,.25);
+  box-shadow: 0 0 20px rgba(255,255,255,.06);
+}
+.stat::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.03));
+  pointer-events: none;
+}
+.stat small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+.stat b {
+  display: block;
+  font-size: 28px;
+  margin-top: 6px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: #fff;
+  text-shadow: 0 0 16px rgba(255,255,255,.35);
+}
+.stat .trend {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+/* ===== TABLES & TOOLS ===== */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+  align-items: center;
+}
+.toolbar input,
+.toolbar select {
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #333;
+  background: #08080c;
+  color: #fff;
+  min-height: 42px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  color-scheme: dark;
+}
+.toolbar input { flex: 1; min-width: 160px; }
+.toolbar input:focus,
+.toolbar select:focus {
+  border-color: rgba(255,255,255,.5);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+}
+.tablewrap {
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius);
+  background: rgba(8,8,12,.98);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 780px;
+}
+.table th,
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #1a1a22;
+  text-align: left;
+  font-size: 13px;
+  vertical-align: middle;
+}
+.table th {
+  color: #777;
+  background: rgba(14,14,20,.98);
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.table tr:hover td {
+  background: rgba(255,255,255,.04);
+}
+.table .actions-cell { white-space: nowrap; }
+.badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+.badge.active {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1px solid #555;
+}
+.badge.blocked {
+  background: rgba(255,107,122,.12);
+  color: var(--red);
+  border: 1px solid rgba(255,107,122,.35);
+}
+.badge.paid {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1px solid #555;
+}
+.badge.pending {
+  background: rgba(255,255,255,.06);
+  color: #ccc;
+  border: 1px solid #444;
+}
+.badge.overdue {
+  background: rgba(255,107,122,.12);
+  color: var(--red);
+  border: 1px solid rgba(255,107,122,.35);
+}
+.badge.draft {
+  background: rgba(255,255,255,.05);
+  color: #999;
+  border: 1px solid #333;
+}
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-family: var(--font-display);
+}
+
+/* ===== MODAL ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.8);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+.modal .panel {
+  width: min(640px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+}
+.modal-lg .panel { width: min(780px, 100%); }
+
+/* ===== SECTIONS ===== */
+.section { display: none; }
+.section.active { display: block; }
+.studentbox { max-width: 860px; margin: 24px auto; }
+.notice-box {
+  padding: 14px 16px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--radius);
+  color: #ccc;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.55;
+  font-weight: 500;
+}
+.notice-card {
+  background: rgba(12,12,18,.95);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 12px;
+  border-left: 3px solid #fff;
+  transition: border-color 0.25s;
+}
+.notice-card:hover { border-color: rgba(255,255,255,.25); }
+.notice-card h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,.2);
+}
+.notice-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+  font-weight: 500;
+}
+.notice-card .meta {
+  font-size: 11px;
+  color: #666;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+}
+
+/* ===== PROGRESS ===== */
+.progress-bar {
+  height: 8px;
+  background: #1a1a22;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress-bar > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #fff, #c8c8d0);
+  border-radius: 999px;
+  transition: width 0.35s;
+  box-shadow: 0 0 12px rgba(255,255,255,.45);
+}
+
+/* ===== TOASTS ===== */
+#toastHost {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  background: rgba(12,12,18,.96);
+  border: 1px solid rgba(255,255,255,.12);
+  border-left: 3px solid #fff;
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.7), 0 0 20px rgba(255,255,255,.08);
+  font-size: 13px;
+  animation: slideIn 0.28s ease;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+.toast.ok { border-left-color: #fff; }
+.toast.err { border-left-color: var(--red); }
+.toast.warn { border-left-color: #ccc; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding-bottom: 12px;
+}
+.tabs button {
+  background: rgba(15,15,22,.9);
+  border: 1px solid #333;
+  color: #888;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tabs button.active {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 16px rgba(255,255,255,.15);
+}
+
+/* ===== ACTIVITY LOG ===== */
+.log-item {
+  display: flex;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #1a1a22;
+  font-size: 13px;
+}
+.log-item .time {
+  color: #666;
+  font-size: 11px;
+  min-width: 110px;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+}
+.log-item .act {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ===== HELPERS ===== */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.mini-card {
+  background: rgba(12,12,18,.95);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.mini-card h4 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.03em;
+}
+.footer {
+  text-align: center;
+  color: #555;
+  padding: 28px;
+  font-size: 12px;
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .cards { grid-template-columns: 1fr; }
+  .dashboard { grid-template-columns: 1fr; }
+  .side {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow: auto;
+    padding: 12px;
+    gap: 4px;
+  }
+  .side .nav-label,
+  .side .logout-wrap { display: none; }
+  .side button {
+    width: auto;
+    white-space: nowrap;
+    padding: 10px 16px;
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 999px;
+  }
+  .side button.active,
+  .side button:hover {
+    border-bottom-color: #fff;
+    border-left-color: transparent;
+  }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .row,
+  .grid-2 { grid-template-columns: 1fr; }
+  .main { padding: 18px 14px; }
+  .top { padding: 0 16px; height: 56px; }
+  .logo { font-size: 14px; }
+}
+@media (max-width: 480px) {
+  .stats { grid-template-columns: 1fr; }
+  .toolbar input { min-width: 100%; }
+  button, input, select { min-height: 44px; }
+  .hero { padding: 40px 0 32px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-layer">
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="scanline"></div>
+  <div class="bg-vignette"></div>
+</div>
+
+<header class="top">
+  <div class="logo">NEXUS<span>/CYBER</span></div>
+  <div class="status"><i class="dot"></i> <span id="sysStatus">SYS.ONLINE // LOCAL.DB</span></div>
+</header>
+
+<!-- HOME -->
+<div id="home" class="screen">
+  <div class="container">
+    <section class="hero">
+      <div class="eyebrow">NEURAL CAMPUS PROTOCOL v4.0</div>
+      <h1>College Management System</h1>
+      <p>Full-spectrum academic command grid — student records, attendance, marks, notices, fee tracking, activity log and multi-layer data recovery. Offline-first. Hardened for demos and real workflows.</p>
+    </section>
+    <div class="cards">
+      <div class="card">
+        <div class="icon">◈</div>
+        <h2>Faculty Portal</h2>
+        <p>Command center for students, courses, attendance, results, fees, notices, backups and system settings.</p>
+        <button class="btn" onclick="show('teacherLogin')">Initialize Faculty Access →</button>
+      </div>
+      <div class="card">
+        <div class="icon">◇</div>
+        <h2>Student Portal</h2>
+        <p>Sign in or create an account. View profile, attendance, marks, notices and fee status. Update personal details.</p>
+        <button class="btn secondary" onclick="show('studentLogin')">Initialize Student Access →</button>
+      </div>
+    </div>
+    <div class="footer">NEXUS CYBER CMS // OFFLINE-FIRST // DATA RECOVERY BUILT-IN // ACADEMIC PROTOCOL</div>
+  </div>
+</div>
+
+<!-- FACULTY LOGIN -->
+<div id="teacherLogin" class="screen hidden">
+  <div class="container">
+    <div class="login panel">
+      <h2>Faculty Authentication</h2>
+      <p>Enter the administrator password to access the faculty console.</p>
+      <div class="field"><label>ADMIN PASSWORD</label><input id="adminPass" type="password" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')teacherAuth()"></div>
+      <div class="msg" id="adminMsg"></div>
+      <div class="actions">
+        <button class="btn" onclick="teacherAuth()">Authenticate</button>
+        <button class="btn secondary" onclick="show('home')">Back</button>
+      </div>
+      <p class="hint">Default password on first run is <b>admin123</b> (forced change required). Passwords stored as SHA-256 + salt. Data remains local to this browser.</p>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT LOGIN / SIGN UP -->
+<div id="studentLogin" class="screen hidden">
+  <div class="container">
+    <div class="login panel" style="max-width:480px">
+      <h2>Student Portal</h2>
+      <div class="tabs" style="margin:14px 0 18px;border:0;padding:0">
+        <button type="button" class="active" id="tabBtnSignIn" onclick="switchStudentAuth('signin')">Sign In</button>
+        <button type="button" id="tabBtnSignUp" onclick="switchStudentAuth('signup')">Sign Up</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <div id="stuAuthSignIn">
+        <p style="color:var(--muted);font-size:15px;margin:0 0 16px">Sign in with your registration number and password.</p>
+        <div class="field"><label>REGISTRATION NUMBER</label><input id="siReg" placeholder="e.g. NEXUS2026001" autocomplete="username" onkeydown="if(event.key==='Enter')studentSignIn()"></div>
+        <div class="field"><label>PASSWORD</label><input id="siPass" type="password" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')studentSignIn()"></div>
+        <div class="msg" id="siMsg"></div>
+        <div class="actions">
+          <button class="btn" onclick="studentSignIn()">Sign In</button>
+          <button class="btn secondary" onclick="show('home')">Back</button>
+        </div>
+        <p class="hint">New student? Switch to <b style="color:#cbd8ef;cursor:pointer" onclick="switchStudentAuth('signup')">Sign Up</b>.</p>
+      </div>
+
+      <!-- SIGN UP -->
+      <div id="stuAuthSignUp" class="hidden">
+        <p style="color:var(--muted);font-size:15px;margin:0 0 16px">Create your student account. Faculty can also add you from the admin panel.</p>
+        <div class="field"><label>REGISTRATION NUMBER *</label><input id="suReg" placeholder="e.g. NEXUS2026001" autocomplete="username"></div>
+        <div class="field"><label>FULL NAME *</label><input id="suName" placeholder="Your full name" autocomplete="name"></div>
+        <div class="row">
+          <div class="field"><label>COURSE *</label><select id="suCourse"></select></div>
+          <div class="field"><label>SEMESTER *</label><select id="suSem"></select></div>
+        </div>
+        <div class="field"><label>EMAIL</label><input id="suEmail" type="email" placeholder="optional@college.edu" autocomplete="email"></div>
+        <div class="field"><label>PASSWORD *</label><input id="suPass" type="password" placeholder="Min 8 chars, letters + numbers" autocomplete="new-password"></div>
+        <div class="field"><label>CONFIRM PASSWORD *</label><input id="suPass2" type="password" placeholder="Re-enter password" autocomplete="new-password" onkeydown="if(event.key==='Enter')studentSignUp()"></div>
+        <div class="msg" id="suMsg"></div>
+        <div class="actions">
+          <button class="btn" onclick="studentSignUp()">Create Account</button>
+          <button class="btn secondary" onclick="show('home')">Back</button>
+        </div>
+        <p class="hint">Already registered? Switch to <b style="color:#cbd8ef;cursor:pointer" onclick="switchStudentAuth('signin')">Sign In</b>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FACULTY DASHBOARD -->
+<div id="teacherDash" class="hidden">
+  <div class="dashboard">
+    <aside class="side">
+      <div class="nav-label">MAIN</div>
+      <button class="active" data-sec="overview" onclick="section('overview',this)">▣ Overview</button>
+      <button data-sec="students" onclick="section('students',this)">◎ Students</button>
+      <button data-sec="attendance" onclick="section('attendance',this)">◉ Attendance</button>
+      <button data-sec="marks" onclick="section('marks',this)">▦ Marks</button>
+      <button data-sec="fees" onclick="section('fees',this)">◈ Fees</button>
+      <button data-sec="notices" onclick="section('notices',this)">◇ Notices</button>
+      <div class="nav-label">SYSTEM</div>
+      <button data-sec="courses" onclick="section('courses',this)">▦ Courses</button>
+      <button data-sec="activity" onclick="section('activity',this)">◎ Activity Log</button>
+      <button data-sec="backup" onclick="section('backup',this)">◉ Data Recovery</button>
+      <button data-sec="settings" onclick="section('settings',this)">⚙ Settings</button>
+      <div class="logout-wrap">
+        <button class="btn secondary" style="width:100%;justify-content:center" onclick="logout()">Sign Out</button>
+      </div>
+    </aside>
+    <main class="main">
+      <!-- Overview -->
+      <section id="overview" class="section active">
+        <div class="titlebar">
+          <div><h2>Faculty Command Grid</h2><small>Live academic administration console // local core</small></div>
+          <div class="actions">
+            <button class="btn" onclick="openAdd()">+ Add Student</button>
+            <button class="btn secondary" onclick="seedDemoData()">Inject Demo Data</button>
+          </div>
+        </div>
+        <div class="stats" id="statGrid"></div>
+        <div class="notice-box" style="margin-top:20px" id="overviewHint">
+          All data resides in this browser (localStorage + recovery layer). Use <b>Data Recovery</b> regularly to download secure backups (password hashes excluded). For multi-user production, connect a backend (Firebase / Supabase).
+        </div>
+        <h3 style="margin:28px 0 12px;font-size:14px;color:var(--muted);font-family:var(--font-display);letter-spacing:0.1em;text-transform:uppercase">Recent activity</h3>
+        <div id="recentLog" class="tablewrap" style="padding:10px 16px;min-height:80px"></div>
+      </section>
+
+      <!-- Students -->
+      <section id="students" class="section">
+        <div class="titlebar">
+          <div><h2>Student Records</h2><small>Search, filter, edit, block or export</small></div>
+          <button class="btn" onclick="openAdd()">+ Add Student</button>
+        </div>
+        <div class="toolbar">
+          <input id="searchBox" placeholder="Search name, reg, roll, email, phone…" oninput="refreshStudents()">
+          <select id="filterCourse" onchange="refreshStudents()"><option value="">All courses</option></select>
+          <select id="filterSem" onchange="refreshStudents()"><option value="">All semesters</option></select>
+          <select id="filterStatus" onchange="refreshStudents()">
+            <option value="">All status</option>
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+          </select>
+          <button class="btn secondary sm" onclick="exportCSV()">Export CSV</button>
+          <button class="btn secondary sm" onclick="document.getElementById('csvImport').click()">Import CSV</button>
+          <input type="file" id="csvImport" accept=".csv,text/csv" class="hidden" onchange="importCSV(this)">
+        </div>
+        <div class="tablewrap"><table class="table"><thead>
+          <tr><th>Reg No</th><th>Name</th><th>Course</th><th>Sem</th><th>Contact</th><th>Status</th><th>Actions</th></tr>
+        </thead><tbody id="studentTable"></tbody></table></div>
+      </section>
+
+      <!-- Attendance -->
+      <section id="attendance" class="section">
+        <div class="titlebar">
+          <div><h2>Attendance</h2><small>Mark daily attendance by course & semester</small></div>
+        </div>
+        <div class="toolbar">
+          <select id="attCourse" onchange="loadAttendanceSheet()"></select>
+          <select id="attSem" onchange="loadAttendanceSheet()"></select>
+          <input type="date" id="attDate" onchange="loadAttendanceSheet()">
+          <button class="btn green sm" onclick="saveAttendanceSheet()">Save Attendance</button>
+          <button class="btn secondary sm" onclick="markAllPresent()">Mark All Present</button>
+        </div>
+        <div class="tablewrap"><table class="table"><thead>
+          <tr><th>Reg No</th><th>Name</th><th>Present</th><th>% Overall</th></tr>
+        </thead><tbody id="attTable"></tbody></table></div>
+        <p class="hint" id="attHint"></p>
+      </section>
+
+      <!-- Marks -->
+      <section id="marks" class="section">
+        <div class="titlebar">
+          <div><h2>Marks / Results</h2><small>Enter subject marks per student</small></div>
+          <button class="btn" onclick="openMarksModal()">+ Add / Edit Marks</button>
+        </div>
+        <div class="toolbar">
+          <select id="marksCourse" onchange="refreshMarksTable()"></select>
+          <select id="marksSem" onchange="refreshMarksTable()"></select>
+          <input id="marksSearch" placeholder="Filter by name or reg…" oninput="refreshMarksTable()">
+        </div>
+        <div class="tablewrap"><table class="table"><thead>
+          <tr><th>Reg No</th><th>Name</th><th>Subject</th><th>Marks</th><th>Max</th><th>%</th><th>Grade</th><th></th></tr>
+        </thead><tbody id="marksTable"></tbody></table></div>
+      </section>
+
+      <!-- Fees -->
+      <section id="fees" class="section">
+        <div class="titlebar">
+          <div><h2>Fee Tracking</h2><small>Update fee status per student</small></div>
+        </div>
+        <div class="toolbar">
+          <input id="feeSearch" placeholder="Search student…" oninput="refreshFeesTable()">
+          <select id="feeFilter" onchange="refreshFeesTable()">
+            <option value="">All</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+            <option value="overdue">Overdue</option>
+          </select>
+        </div>
+        <div class="tablewrap"><table class="table"><thead>
+          <tr><th>Reg No</th><th>Name</th><th>Course</th><th>Amount</th><th>Status</th><th>Due Date</th><th>Actions</th></tr>
+        </thead><tbody id="feesTable"></tbody></table></div>
+      </section>
+
+      <!-- Notices -->
+      <section id="notices" class="section">
+        <div class="titlebar">
+          <div><h2>Notices & Announcements</h2><small>Published notices appear on student portal</small></div>
+        </div>
+        <div class="panel" style="margin-bottom:18px">
+          <div class="field"><label>TITLE</label><input id="noticeTitle" placeholder="Exam schedule / Holiday notice…"></div>
+          <div class="field"><label>MESSAGE</label><textarea id="noticeBody" placeholder="Write the announcement…"></textarea></div>
+          <div class="actions">
+            <button class="btn" onclick="publishNotice()">Publish Notice</button>
+            <button class="btn secondary" onclick="clearNoticeForm()">Clear</button>
+          </div>
+        </div>
+        <div id="noticeList"></div>
+      </section>
+
+      <!-- Courses -->
+      <section id="courses" class="section">
+        <div class="titlebar">
+          <div><h2>Courses</h2><small>Manage available programmes</small></div>
+        </div>
+        <div class="toolbar">
+          <input id="newCourse" placeholder="New course name (e.g. MCA)">
+          <button class="btn" onclick="addCourse()">Add Course</button>
+        </div>
+        <div id="courseList" class="tablewrap" style="padding:4px 0"></div>
+      </section>
+
+      <!-- Activity -->
+      <section id="activity" class="section">
+        <div class="titlebar">
+          <div><h2>Activity Log</h2><small>Audit trail of important actions</small></div>
+          <button class="btn secondary sm" onclick="clearActivityLog()">Clear Log</button>
+        </div>
+        <div id="fullLog" class="tablewrap" style="padding:12px 18px;max-height:60vh;overflow:auto"></div>
+      </section>
+
+      <!-- Backup / Recovery -->
+      <section id="backup" class="section">
+        <div class="titlebar">
+          <div><h2>Data Recovery Center</h2><small>Protect against browser data loss</small></div>
+        </div>
+        <div class="stats" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+          <div class="stat"><small>STUDENTS</small><b id="bkStudents">0</b></div>
+          <div class="stat"><small>LAST AUTO-SAVE</small><b id="bkTime" style="font-size:15px">—</b></div>
+          <div class="stat"><small>RECOVERY COPIES</small><b id="bkSlots">0</b></div>
+        </div>
+        <div class="grid-2">
+          <div class="mini-card">
+            <h4>Download Backup</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0 0 14px">Full JSON snapshot (students, courses, attendance, marks, fees, notices, settings).</p>
+            <button class="btn green" onclick="downloadBackup()">⬇ Download Full Backup</button>
+          </div>
+          <div class="mini-card">
+            <h4>Restore from File</h4>
+            <p style="color:var(--muted);font-size:14px;margin:0 0 14px">Replace current data with a previously downloaded NEXUS backup.</p>
+            <button class="btn orange" onclick="document.getElementById('restoreFile').click()">⬆ Restore Backup</button>
+            <input type="file" id="restoreFile" accept=".json,application/json" class="hidden" onchange="restoreBackupFile(this)">
+          </div>
+        </div>
+        <div class="notice-box" style="margin-top:18px">
+          <b>How recovery works</b><br>
+          • Live data lives in <code>localStorage</code>.<br>
+          • A recovery snapshot is written on every save.<br>
+          • Up to 5 timestamped recovery slots are kept automatically.<br>
+          • Always download a JSON backup before clearing browser data or switching devices.
+        </div>
+        <div style="margin-top:18px">
+          <h4 style="margin:0 0 10px;font-size:13px;color:var(--muted);font-family:var(--font-display);letter-spacing:0.1em;text-transform:uppercase">Recovery slots (this browser)</h4>
+          <div id="slotList"></div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section id="settings" class="section">
+        <div class="titlebar">
+          <div><h2>Settings</h2><small>Password, registration prefix, danger zone</small></div>
+        </div>
+        <div class="panel" style="max-width:500px">
+          <h3 style="margin:0 0 14px;font-size:16px;font-family:var(--font-display)">Change Admin Password</h3>
+          <div class="field"><label>CURRENT PASSWORD</label><input id="curPass" type="password"></div>
+          <div class="field"><label>NEW PASSWORD</label><input id="newPass" type="password" placeholder="Min 8 characters, letters + numbers"></div>
+          <div class="field"><label>CONFIRM NEW PASSWORD</label><input id="newPass2" type="password"></div>
+          <div class="actions"><button class="btn" onclick="changePassword()">Update Password</button></div>
+          <div class="msg" id="passMsg"></div>
+        </div>
+        <div class="panel" style="max-width:500px;margin-top:18px">
+          <h3 style="margin:0 0 14px;font-size:16px;font-family:var(--font-display)">Registration Prefix</h3>
+          <div class="field"><label>PREFIX (used when auto-generating reg nos)</label><input id="regPrefix" value="NEXUS"></div>
+          <div class="actions"><button class="btn secondary" onclick="saveRegPrefix()">Save Prefix</button></div>
+        </div>
+        <div class="panel" style="max-width:500px;margin-top:18px;border-color:rgba(255,77,109,0.3)">
+          <h3 style="margin:0 0 10px;font-size:16px;color:var(--red);font-family:var(--font-display)">Danger Zone</h3>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 14px">Wipe all local data. This cannot be undone unless you have a backup file.</p>
+          <button class="btn danger" onclick="wipeAllData()">Wipe All Local Data</button>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- STUDENT DASHBOARD -->
+<div id="studentDash" class="hidden">
+  <div class="container studentbox">
+    <div class="titlebar">
+      <div>
+        <h2 id="stuWelcome">Student Portal</h2>
+        <small id="stuSub" style="color:var(--muted)"></small>
+      </div>
+      <button class="btn secondary" onclick="logout()">Sign Out</button>
+    </div>
+    <div class="notice-box" id="stuBlocked" class="hidden" style="border-color:rgba(255,77,109,0.4);background:rgba(255,77,109,0.08);color:#ff9cac">
+      Your account is currently <b>blocked</b>. Contact the faculty office.
+    </div>
+    <div class="tabs" id="stuTabs">
+      <button class="active" onclick="stuTab('profile',this)">Profile</button>
+      <button onclick="stuTab('myatt',this)">Attendance</button>
+      <button onclick="stuTab('mymarks',this)">Marks</button>
+      <button onclick="stuTab('myfees',this)">Fees</button>
+      <button onclick="stuTab('mynotices',this)">Notices</button>
+    </div>
+
+    <div id="tab-profile" class="stu-panel">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:12px;color:var(--muted);font-family:var(--font-display);letter-spacing:0.08em">PROFILE COMPLETENESS</div>
+            <div class="progress-bar" style="width:200px"><i id="profileBar" style="width:0%"></i></div>
+          </div>
+          <span id="profilePct" style="font-size:14px;color:#fff;font-family:var(--font-display)">0%</span>
+        </div>
+        <form id="studentForm" onsubmit="saveStudentProfile(event)">
+          <div class="row">
+            <div class="field"><label>REGISTRATION NUMBER</label><input id="fReg" readonly style="opacity:.7"></div>
+            <div class="field"><label>ROLL NUMBER *</label><input id="fRoll" required></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>FULL NAME *</label><input id="fName" required></div>
+            <div class="field"><label>AGE *</label><input id="fAge" type="number" min="15" max="80" required></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>COURSE *</label><select id="fCourse" required></select></div>
+            <div class="field"><label>SEMESTER *</label><select id="fSem" required></select></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>EMAIL *</label><input id="fEmail" type="email" required></div>
+            <div class="field"><label>PHONE *</label><input id="fPhone" required placeholder="10-digit mobile"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>GENDER</label><select id="fGender"><option>Prefer not to say</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+            <div class="field"><label>CITY</label><input id="fCity"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>BLOOD GROUP</label><select id="fBlood"><option value="">—</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+            <div class="field"><label>GUARDIAN NAME</label><input id="fGuardian"></div>
+          </div>
+          <div class="field"><label>ADDRESS</label><input id="fAddress"></div>
+          <div class="actions"><button class="btn" type="submit">Save / Update Profile</button></div>
+          <div id="saveMsg" class="msg"></div>
+        </form>
+        <hr style="border:0;border-top:1px solid var(--line);margin:28px 0">
+        <h3 style="margin:0 0 14px;font-size:15px;font-family:var(--font-display)">Change Password</h3>
+        <div class="row">
+          <div class="field"><label>CURRENT PASSWORD</label><input id="fCurPass" type="password" autocomplete="current-password"></div>
+          <div class="field"><label>NEW PASSWORD</label><input id="fNewPass" type="password" placeholder="Min 8 chars, letters + numbers" autocomplete="new-password"></div>
+        </div>
+        <div class="field"><label>CONFIRM NEW PASSWORD</label><input id="fNewPass2" type="password" autocomplete="new-password"></div>
+        <div class="actions"><button class="btn secondary" type="button" onclick="changeStudentPassword()">Update Password</button></div>
+        <div id="stuPassMsg" class="msg"></div>
+      </div>
+    </div>
+
+    <div id="tab-myatt" class="stu-panel hidden">
+      <div class="panel">
+        <h3 style="margin:0 0 14px;font-size:16px;font-family:var(--font-display)">Attendance Summary</h3>
+        <div id="stuAttSummary" class="stats" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px"></div>
+        <div class="tablewrap"><table class="table"><thead><tr><th>Date</th><th>Status</th></tr></thead><tbody id="stuAttTable"></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="tab-mymarks" class="stu-panel hidden">
+      <div class="panel">
+        <h3 style="margin:0 0 14px;font-size:16px;font-family:var(--font-display)">Marks & Grades</h3>
+        <div class="tablewrap"><table class="table"><thead><tr><th>Subject</th><th>Marks</th><th>Max</th><th>%</th><th>Grade</th></tr></thead><tbody id="stuMarksTable"></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="tab-myfees" class="stu-panel hidden">
+      <div class="panel">
+        <h3 style="margin:0 0 14px;font-size:16px;font-family:var(--font-display)">Fee Status</h3>
+        <div id="stuFeeCard"></div>
+      </div>
+    </div>
+
+    <div id="tab-mynotices" class="stu-panel hidden">
+      <div id="stuNoticeList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT STUDENT MODAL -->
+<div id="modal" class="modal hidden">
+  <div class="panel">
+    <h2 id="modalTitle">Add Student</h2>
+    <div class="row">
+      <div class="field"><label>REGISTRATION NUMBER *</label><input id="mReg" placeholder="Auto if empty"></div>
+      <div class="field"><label>ROLL NUMBER</label><input id="mRoll"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>NAME *</label><input id="mName"></div>
+      <div class="field"><label>AGE</label><input id="mAge" type="number" min="15" max="80"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>COURSE *</label><select id="mCourse"></select></div>
+      <div class="field"><label>SEMESTER *</label><select id="mSem"></select></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>EMAIL</label><input id="mEmail" type="email"></div>
+      <div class="field"><label>PHONE</label><input id="mPhone"></div>
+    </div>
+    <div class="field"><label>STUDENT PASSWORD <span style="color:var(--muted);font-weight:400">(optional — for portal login)</span></label><input id="mPass" type="password" placeholder="Leave blank to keep existing / unset"></div>
+    <div class="actions">
+      <button class="btn" onclick="saveAdminStudent()">Save Record</button>
+      <button class="btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn ghost" onclick="genReg()">Auto Reg No</button>
+    </div>
+    <div id="modalMsg" class="msg"></div>
+  </div>
+</div>
+
+<!-- MARKS MODAL -->
+<div id="marksModal" class="modal hidden">
+  <div class="panel">
+    <h2>Enter Marks</h2>
+    <div class="field"><label>STUDENT</label><select id="mkStudent"></select></div>
+    <div class="row">
+      <div class="field"><label>SUBJECT *</label><input id="mkSubject" placeholder="e.g. Data Structures"></div>
+      <div class="field"><label>MARKS OBTAINED *</label><input id="mkObtained" type="number" min="0" step="0.5"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>MAXIMUM MARKS *</label><input id="mkMax" type="number" min="1" value="100"></div>
+      <div class="field"><label>EXAM / TERM</label><input id="mkTerm" placeholder="Mid-term / End-sem"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="saveMarks()">Save Marks</button>
+      <button class="btn secondary" onclick="closeMarksModal()">Cancel</button>
+    </div>
+    <div id="mkMsg" class="msg"></div>
+  </div>
+</div>
+
+<!-- FEE EDIT MODAL -->
+<div id="feeModal" class="modal hidden">
+  <div class="panel">
+    <h2>Update Fee</h2>
+    <p id="feeStuName" style="color:var(--muted);margin:0 0 14px"></p>
+    <div class="row">
+      <div class="field"><label>AMOUNT (₹)</label><input id="feeAmount" type="number" min="0" step="100"></div>
+      <div class="field"><label>STATUS</label>
+        <select id="feeStatus"><option value="pending">Pending</option><option value="paid">Paid</option><option value="overdue">Overdue</option></select>
+      </div>
+    </div>
+    <div class="field"><label>DUE DATE</label><input id="feeDue" type="date"></div>
+    <div class="actions">
+      <button class="btn" onclick="saveFee()">Save</button>
+      <button class="btn secondary" onclick="closeFeeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastHost"></div>
+
+<script>
+/* ============================================================
+   NEXUS ADVANCED CMS — state, storage & recovery
+   ============================================================ */
+const KEYS = {
+  students: 'nexus_adv_students',
+  courses: 'nexus_adv_courses',
+  attendance: 'nexus_adv_attendance',
+  marks: 'nexus_adv_marks',
+  fees: 'nexus_adv_fees',
+  notices: 'nexus_adv_notices',
+  activity: 'nexus_adv_activity',
+  settings: 'nexus_adv_settings',
+  backup: 'nexus_adv_recovery',
+  slots: 'nexus_adv_slots',
+  uiState: 'nexus_adv_ui_state'
+};
+
+const DEFAULT_COURSES = ["BCA","BBA","B.Com","BA","B.Sc","MCA","MBA"];
+const SEMESTERS = ["Semester 1","Semester 2","Semester 3","Semester 4","Semester 5","Semester 6","Semester 7","Semester 8"];
+const DEFAULT_SETTINGS = { passwordHash: null, passwordSalt: null, regPrefix: 'NEXUS', year: new Date().getFullYear(), mustChangePassword: true };
+
+let students = [], courses = [], attendance = {}, marks = [], fees = {}, notices = [], activity = [];
+let settings = { ...DEFAULT_SETTINGS };
+let currentStudent = null, editing = null, feeEditReg = null;
+let _failedFacultyAttempts = 0;
+let _facultyLockUntil = 0;
+
+function generateSalt(len = 16) {
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function hashPassword(password, salt) {
+  return await sha256(salt + '|' + password);
+}
+
+async function verifyPassword(password, storedHash, salt) {
+  if (!storedHash || !salt) return false;
+  const h = await hashPassword(password, salt);
+  return h === storedHash;
+}
+
+async function ensureHashedPassword(obj, field = 'password') {
+  if (!obj || !obj[field]) return;
+  if (obj.passwordHash && obj.passwordSalt) return;
+  const salt = generateSalt();
+  const hash = await hashPassword(obj[field], salt);
+  obj.passwordHash = hash;
+  obj.passwordSalt = salt;
+  delete obj[field];
+}
+
+async function setAdminPassword(plain) {
+  const salt = generateSalt();
+  settings.passwordHash = await hashPassword(plain, salt);
+  settings.passwordSalt = salt;
+  settings.mustChangePassword = (plain === 'admin123');
+  delete settings.password;
+}
+
+async function initDefaultAdminIfNeeded() {
+  if (!settings.passwordHash || !settings.passwordSalt) {
+    await setAdminPassword('admin123');
+    settings.mustChangePassword = true;
+  }
+}
+
+function readJSON(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  } catch (e) { return fallback; }
+}
+
+async function loadAll() {
+  students = readJSON(KEYS.students, []);
+  courses = readJSON(KEYS.courses, DEFAULT_COURSES.slice());
+  attendance = readJSON(KEYS.attendance, {});
+  marks = readJSON(KEYS.marks, []);
+  fees = readJSON(KEYS.fees, {});
+  notices = readJSON(KEYS.notices, []);
+  activity = readJSON(KEYS.activity, []);
+  const stored = readJSON(KEYS.settings, {});
+  settings = { ...DEFAULT_SETTINGS, ...stored };
+  if (settings.password) delete settings.password;
+  await initDefaultAdminIfNeeded();
+
+  let migrated = false;
+  for (const s of students) {
+    if (s.password && !s.passwordHash) {
+      await ensureHashedPassword(s);
+      migrated = true;
+    }
+  }
+  if (migrated) {
+    try { localStorage.setItem(KEYS.students, JSON.stringify(students)); } catch (e) {}
+  }
+
+  if (students.length === 0 && courses.length <= DEFAULT_COURSES.length) {
+    const bak = readJSON(KEYS.backup, null);
+    if (bak && Array.isArray(bak.students) && bak.students.length) {
+      students = bak.students;
+      courses = bak.courses || courses;
+      attendance = bak.attendance || {};
+      marks = bak.marks || [];
+      fees = bak.fees || {};
+      notices = bak.notices || [];
+      log('System recovered data from recovery snapshot');
+    }
+  }
+}
+
+function snapshot() {
+  const safeSettings = { ...settings };
+  delete safeSettings.password;
+  delete safeSettings.passwordHash;
+  delete safeSettings.passwordSalt;
+  return {
+    version: 3,
+    savedAt: new Date().toISOString(),
+    students: students.map(s => {
+      const copy = { ...s };
+      delete copy.password;
+      delete copy.passwordHash;
+      delete copy.passwordSalt;
+      return copy;
+    }),
+    courses, attendance, marks, fees, notices, activity,
+    settings: safeSettings
+  };
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEYS.students, JSON.stringify(students));
+    localStorage.setItem(KEYS.courses, JSON.stringify(courses));
+    localStorage.setItem(KEYS.attendance, JSON.stringify(attendance));
+    localStorage.setItem(KEYS.marks, JSON.stringify(marks));
+    localStorage.setItem(KEYS.fees, JSON.stringify(fees));
+    localStorage.setItem(KEYS.notices, JSON.stringify(notices));
+    localStorage.setItem(KEYS.activity, JSON.stringify(activity.slice(0, 200)));
+    const settingsToStore = { ...settings };
+    delete settingsToStore.password;
+    localStorage.setItem(KEYS.settings, JSON.stringify(settingsToStore));
+
+    const snap = {
+      version: 3,
+      savedAt: new Date().toISOString(),
+      students, courses, attendance, marks, fees, notices, activity: activity.slice(0, 50),
+      settings: settingsToStore
+    };
+    localStorage.setItem(KEYS.backup, JSON.stringify(snap));
+
+    let slots = readJSON(KEYS.slots, []);
+    slots.unshift({ at: snap.savedAt, count: students.length });
+    slots = slots.slice(0, 5);
+    localStorage.setItem(KEYS.slots, JSON.stringify(slots));
+
+    const el = document.getElementById('backupStatus');
+    if (el) el.textContent = 'Saved • ' + new Date().toLocaleString();
+  } catch (e) {
+    console.warn('NEXUS storage error', e);
+    toast('Storage full or blocked. Download a backup now.', 'err');
+  }
+}
+
+function log(msg) {
+  activity.unshift({ t: new Date().toISOString(), msg });
+  if (activity.length > 200) activity.length = 200;
+  try { localStorage.setItem(KEYS.activity, JSON.stringify(activity)); } catch (e) {}
+}
+
+function toast(msg, type = 'ok') {
+  const host = document.getElementById('toastHost');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  host.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3200);
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+}
+
+function gradeOf(pct) {
+  if (pct >= 90) return 'A+';
+  if (pct >= 80) return 'A';
+  if (pct >= 70) return 'B+';
+  if (pct >= 60) return 'B';
+  if (pct >= 50) return 'C';
+  if (pct >= 40) return 'D';
+  return 'F';
+}
+
+function readUIState() {
+  try {
+    return JSON.parse(localStorage.getItem(KEYS.uiState) || '{}') || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function writeUIState(patch) {
+  try {
+    const current = readUIState();
+    localStorage.setItem(KEYS.uiState, JSON.stringify({ ...current, ...patch }));
+  } catch (e) {
+    console.warn('UI state storage error', e);
+  }
+}
+
+function clearUIState() {
+  try { localStorage.removeItem(KEYS.uiState); } catch (e) {}
+}
+
+function show(id, persist = true) {
+  document.querySelectorAll('.screen,#teacherDash,#studentDash').forEach(x => x.classList.add('hidden'));
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.classList.remove('hidden');
+
+  if (persist) writeUIState({ screen: id });
+
+  if (id === 'studentLogin') switchStudentAuth('signin');
+}
+
+function section(id, btn, persist = true) {
+  document.querySelectorAll('#teacherDash .section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.side button[data-sec]').forEach(b => b.classList.remove('active'));
+  const activeBtn = btn || document.querySelector('.side button[data-sec="' + id + '"]');
+  if (activeBtn) activeBtn.classList.add('active');
+
+  if (persist) writeUIState({ screen: 'teacherDash', teacherSection: id });
+
+  if (id === 'overview') refreshOverview();
+  if (id === 'students') refreshStudents();
+  if (id === 'attendance') { fillAttSelects(); loadAttendanceSheet(); }
+  if (id === 'marks') { fillMarksSelects(); refreshMarksTable(); }
+  if (id === 'fees') refreshFeesTable();
+  if (id === 'notices') renderNotices();
+  if (id === 'courses') renderCourses();
+  if (id === 'activity') renderFullLog();
+  if (id === 'backup') refreshBackupUI();
+  if (id === 'settings') {
+    const prefix = document.getElementById('regPrefix');
+    if (prefix) prefix.value = settings.regPrefix || 'NEXUS';
+  }
+}
+
+function stuTab(id, btn, persist = true) {
+  document.querySelectorAll('.stu-panel').forEach(p => p.classList.add('hidden'));
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.remove('hidden');
+
+  document.querySelectorAll('#stuTabs button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  if (persist) writeUIState({ screen: 'studentDash', studentTab: id });
+
+  if (id === 'myatt') renderStudentAttendance();
+  if (id === 'mymarks') renderStudentMarks();
+  if (id === 'myfees') renderStudentFees();
+  if (id === 'mynotices') renderStudentNotices();
+}
+
+async function teacherAuth() {
+  const msgEl = document.getElementById('adminMsg');
+  msgEl.className = 'msg';
+  const now = Date.now();
+  if (now < _facultyLockUntil) {
+    const sec = Math.ceil((_facultyLockUntil - now) / 1000);
+    msgEl.textContent = `Too many failed attempts. Try again in ${sec}s.`;
+    return;
+  }
+  const pass = document.getElementById('adminPass').value;
+  if (!pass) {
+    msgEl.textContent = 'Password is required.';
+    return;
+  }
+  const ok = await verifyPassword(pass, settings.passwordHash, settings.passwordSalt);
+  if (ok) {
+    _failedFacultyAttempts = 0;
+    document.getElementById('adminPass').value = '';
+    fillSelects();
+    writeUIState({ authenticated: true, role: 'faculty', screen: 'teacherDash', teacherSection: 'overview' });
+    show('teacherDash');
+    section('overview', document.querySelector('.side button[data-sec="overview"]'), false);
+    log('Faculty logged in');
+    toast('Welcome to Faculty Portal');
+    if (settings.mustChangePassword) {
+      setTimeout(() => {
+        section('settings', document.querySelector('.side button[data-sec="settings"]'));
+        toast('Please change the default admin password now.', 'err');
+        const hint = document.getElementById('passMsg');
+        if (hint) {
+          hint.className = 'msg';
+          hint.textContent = 'Security: You are using the default password. Change it immediately.';
+        }
+      }, 400);
+    }
+  } else {
+    _failedFacultyAttempts++;
+    if (_failedFacultyAttempts >= 5) {
+      _facultyLockUntil = Date.now() + 30000;
+      _failedFacultyAttempts = 0;
+      msgEl.textContent = 'Too many failed attempts. Locked for 30 seconds.';
+    } else {
+      msgEl.textContent = `Incorrect password. (${5 - _failedFacultyAttempts} attempts left)`;
+    }
+  }
+}
+
+function switchStudentAuth(mode) {
+  const signIn = mode === 'signin';
+  document.getElementById('stuAuthSignIn').classList.toggle('hidden', !signIn);
+  document.getElementById('stuAuthSignUp').classList.toggle('hidden', signIn);
+  document.getElementById('tabBtnSignIn').classList.toggle('active', signIn);
+  document.getElementById('tabBtnSignUp').classList.toggle('active', !signIn);
+  document.getElementById('siMsg').textContent = '';
+  document.getElementById('suMsg').textContent = '';
+  if (!signIn) {
+    fillSelects();
+    const c = document.getElementById('suCourse');
+    const s = document.getElementById('suSem');
+    if (c) c.innerHTML = courses.map(x => `<option>${esc(x)}</option>`).join('');
+    if (s) s.innerHTML = SEMESTERS.map(x => `<option>${x}</option>`).join('');
+  }
+}
+
+function enterStudentPortal(s, restoreTab = null) {
+  currentStudent = s.reg;
+  writeUIState({
+    authenticated: true,
+    role: 'student',
+    studentReg: s.reg,
+    screen: 'studentDash',
+    studentTab: restoreTab || 'profile'
+  });
+  show('studentDash', false);
+  fillSelects();
+  loadStudentForm();
+  document.getElementById('stuWelcome').textContent = s.name ? s.name : 'Student Portal';
+  document.getElementById('stuSub').textContent = s.reg + (s.course ? ' • ' + s.course : '');
+  const blocked = s.status === 'blocked';
+  document.getElementById('stuBlocked').classList.toggle('hidden', !blocked);
+
+  const tabId = restoreTab || 'profile';
+  const tabBtn = document.querySelector('#stuTabs button[onclick*="stuTab(\'' + tabId + '\'"]') ||
+                 document.querySelector('#stuTabs button');
+  stuTab(tabId, tabBtn, false);
+}
+
+async function studentSignIn() {
+  const reg = document.getElementById('siReg').value.trim();
+  const pass = document.getElementById('siPass').value;
+  const msg = document.getElementById('siMsg');
+  msg.className = 'msg';
+  if (!reg || !pass) {
+    msg.textContent = 'Registration number and password are required.';
+    return;
+  }
+  const s = students.find(x => x.reg.toLowerCase() === reg.toLowerCase());
+  if (!s) {
+    msg.textContent = 'No account found. Please Sign Up first.';
+    return;
+  }
+  if (s.status === 'blocked') {
+    msg.textContent = 'Your account is blocked. Contact faculty.';
+    return;
+  }
+  if (!s.passwordHash) {
+    if (s.password) {
+      if (s.password !== pass) {
+        msg.textContent = 'Incorrect password.';
+        return;
+      }
+      await ensureHashedPassword(s);
+      save();
+    } else {
+      if (pass.length < 8) {
+        msg.textContent = 'Set a password of at least 8 characters (first login).';
+        return;
+      }
+      const salt = generateSalt();
+      s.passwordHash = await hashPassword(pass, salt);
+      s.passwordSalt = salt;
+      delete s.password;
+      save();
+      log('Student set password on first login: ' + s.reg);
+      toast('Password set. Welcome!', 'ok');
+    }
+  } else {
+    const ok = await verifyPassword(pass, s.passwordHash, s.passwordSalt);
+    if (!ok) {
+      msg.textContent = 'Incorrect password.';
+      return;
+    }
+  }
+  document.getElementById('siPass').value = '';
+  log('Student signed in: ' + s.reg);
+  toast('Welcome back' + (s.name ? ', ' + s.name : ''));
+  writeUIState({ authenticated: true, role: 'student', studentReg: s.reg, screen: 'studentDash', studentTab: 'profile' });
+  enterStudentPortal(s, 'profile');
+}
+
+async function studentSignUp() {
+  const reg = document.getElementById('suReg').value.trim();
+  const name = document.getElementById('suName').value.trim();
+  const course = document.getElementById('suCourse').value;
+  const sem = document.getElementById('suSem').value;
+  const email = document.getElementById('suEmail').value.trim();
+  const pass = document.getElementById('suPass').value;
+  const pass2 = document.getElementById('suPass2').value;
+  const msg = document.getElementById('suMsg');
+  msg.className = 'msg';
+
+  if (!reg || !name) {
+    msg.textContent = 'Registration number and full name are required.';
+    return;
+  }
+  if (pass.length < 8) {
+    msg.textContent = 'Password must be at least 8 characters.';
+    return;
+  }
+  if (!/[A-Za-z]/.test(pass) || !/[0-9]/.test(pass)) {
+    msg.textContent = 'Password must contain letters and numbers.';
+    return;
+  }
+  if (pass !== pass2) {
+    msg.textContent = 'Passwords do not match.';
+    return;
+  }
+  if (students.some(x => x.reg.toLowerCase() === reg.toLowerCase())) {
+    msg.textContent = 'This registration number is already registered. Please Sign In.';
+    return;
+  }
+
+  const salt = generateSalt();
+  const hash = await hashPassword(pass, salt);
+  const s = {
+    reg, roll: '', name, age: '', course: course || courses[0] || 'BCA', sem: sem || SEMESTERS[0],
+    status: 'active', email, phone: '', gender: 'Prefer not to say', city: '',
+    address: '', blood: '', guardian: '',
+    passwordHash: hash, passwordSalt: salt,
+    createdAt: new Date().toISOString()
+  };
+  students.push(s);
+  save();
+  log('Student signed up: ' + reg);
+  toast('Account created successfully');
+  ['suReg','suName','suEmail','suPass','suPass2'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+  enterStudentPortal(s);
+}
+
+function logout() {
+  currentStudent = null;
+  clearUIState();
+  document.getElementById('adminPass').value = '';
+  ['siReg','siPass','suReg','suName','suEmail','suPass','suPass2'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.value = '';
+  });
+  document.getElementById('siMsg').textContent = '';
+  document.getElementById('suMsg').textContent = '';
+  switchStudentAuth('signin');
+  show('home', false);
+}
+
+function fillSelects() {
+  const ids = ['mCourse', 'fCourse', 'filterCourse', 'attCourse', 'marksCourse'];
+  ids.forEach(id => {
+    const e = document.getElementById(id);
+    if (!e) return;
+    const cur = e.value;
+    if (id === 'filterCourse') {
+      e.innerHTML = '<option value="">All courses</option>' + courses.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    } else {
+      e.innerHTML = courses.map(c => `<option>${esc(c)}</option>`).join('');
+    }
+    if (cur) e.value = cur;
+  });
+  const semIds = ['mSem', 'fSem', 'filterSem', 'attSem', 'marksSem'];
+  semIds.forEach(id => {
+    const e = document.getElementById(id);
+    if (!e) return;
+    const cur = e.value;
+    if (id === 'filterSem') {
+      e.innerHTML = '<option value="">All semesters</option>' + SEMESTERS.map(s => `<option value="${s}">${s}</option>`).join('');
+    } else {
+      e.innerHTML = SEMESTERS.map(s => `<option>${s}</option>`).join('');
+    }
+    if (cur) e.value = cur;
+  });
+}
+
+function genReg() {
+  const prefix = (settings.regPrefix || 'NEXUS') + (settings.year || new Date().getFullYear());
+  let n = 1;
+  const existing = new Set(students.map(s => s.reg.toUpperCase()));
+  while (existing.has((prefix + String(n).padStart(3, '0')).toUpperCase())) n++;
+  document.getElementById('mReg').value = prefix + String(n).padStart(3, '0');
+}
+
+function refreshOverview() {
+  const active = students.filter(s => s.status !== 'blocked').length;
+  const blocked = students.length - active;
+  const paid = Object.values(fees).filter(f => f.status === 'paid').length;
+  const pendingFees = Object.values(fees).filter(f => f.status !== 'paid').length;
+  const noticeCount = notices.length;
+  const markCount = marks.length;
+
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat"><small>TOTAL STUDENTS</small><b>${students.length}</b><div class="trend">${active} active</div></div>
+    <div class="stat"><small>BLOCKED</small><b>${blocked}</b></div>
+    <div class="stat"><small>FEE PENDING</small><b>${pendingFees}</b><div class="trend">${paid} paid</div></div>
+    <div class="stat"><small>NOTICES / MARKS</small><b>${noticeCount}</b><div class="trend">${markCount} mark entries</div></div>
+  `;
+  const recent = activity.slice(0, 8);
+  document.getElementById('recentLog').innerHTML = recent.length
+    ? recent.map(a => `<div class="log-item"><span class="time">${new Date(a.t).toLocaleString()}</span><span class="act">${esc(a.msg)}</span></div>`).join('')
+    : '<div class="empty">No activity yet</div>';
+}
+
+function refreshStudents() {
+  const q = (document.getElementById('searchBox')?.value || '').toLowerCase();
+  const fc = document.getElementById('filterCourse')?.value || '';
+  const fs = document.getElementById('filterSem')?.value || '';
+  const st = document.getElementById('filterStatus')?.value || '';
+
+  let list = students.slice();
+  if (q) list = list.filter(s =>
+    [s.reg, s.roll, s.name, s.email, s.phone, s.course].join(' ').toLowerCase().includes(q)
+  );
+  if (fc) list = list.filter(s => s.course === fc);
+  if (fs) list = list.filter(s => s.sem === fs);
+  if (st) list = list.filter(s => s.status === st);
+
+  const tbody = document.getElementById('studentTable');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">No students found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(s => `
+    <tr>
+      <td><b>${esc(s.reg)}</b></td>
+      <td>${esc(s.name || '—')}</td>
+      <td>${esc(s.course || '—')}</td>
+      <td>${esc(s.sem || '—')}</td>
+      <td style="font-size:13px">${esc(s.email || '')}${s.phone ? '<br>' + esc(s.phone) : ''}</td>
+      <td><span class="badge ${s.status === 'blocked' ? 'blocked' : 'active'}">${s.status || 'active'}</span></td>
+      <td class="actions-cell">
+        <button class="btn secondary sm" onclick="editStudent('${encodeURIComponent(s.reg)}')">Edit</button>
+        <button class="btn sm ${s.status === 'blocked' ? 'green' : 'danger'}" onclick="toggleBlock('${encodeURIComponent(s.reg)}')">${s.status === 'blocked' ? 'Unblock' : 'Block'}</button>
+        <button class="btn danger sm" onclick="deleteStudent('${encodeURIComponent(s.reg)}')">Del</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openAdd() {
+  editing = null;
+  document.getElementById('modalTitle').textContent = 'Add Student';
+  ['mReg','mRoll','mName','mAge','mEmail','mPhone','mPass'].forEach(id => document.getElementById(id).value = '');
+  fillSelects();
+  document.getElementById('modalMsg').textContent = '';
+  document.getElementById('modal').classList.remove('hidden');
+  genReg();
+}
+
+function editStudent(r) {
+  r = decodeURIComponent(r);
+  const s = students.find(x => x.reg === r);
+  if (!s) return;
+  editing = r;
+  document.getElementById('modalTitle').textContent = 'Edit Student';
+  document.getElementById('mReg').value = s.reg;
+  document.getElementById('mRoll').value = s.roll || '';
+  document.getElementById('mName').value = s.name || '';
+  document.getElementById('mAge').value = s.age || '';
+  document.getElementById('mEmail').value = s.email || '';
+  document.getElementById('mPhone').value = s.phone || '';
+  document.getElementById('mPass').value = '';
+  fillSelects();
+  document.getElementById('mCourse').value = s.course || courses[0];
+  document.getElementById('mSem').value = s.sem || SEMESTERS[0];
+  document.getElementById('modalMsg').textContent = '';
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+async function saveAdminStudent() {
+  let reg = document.getElementById('mReg').value.trim();
+  if (!reg) { genReg(); reg = document.getElementById('mReg').value.trim(); }
+  const newPass = document.getElementById('mPass').value;
+  const s = {
+    reg,
+    roll: document.getElementById('mRoll').value.trim(),
+    name: document.getElementById('mName').value.trim(),
+    age: document.getElementById('mAge').value,
+    course: document.getElementById('mCourse').value,
+    sem: document.getElementById('mSem').value,
+    email: document.getElementById('mEmail').value.trim(),
+    phone: document.getElementById('mPhone').value.trim(),
+    status: 'active',
+    gender: 'Prefer not to say', city: '', address: '', blood: '', guardian: ''
+  };
+  if (!s.name) {
+    document.getElementById('modalMsg').textContent = 'Name is required.';
+    return;
+  }
+  if (editing) {
+    const i = students.findIndex(x => x.reg === editing);
+    if (i >= 0) {
+      s.status = students[i].status;
+      s.gender = students[i].gender;
+      s.city = students[i].city;
+      s.address = students[i].address;
+      s.blood = students[i].blood;
+      s.guardian = students[i].guardian;
+      if (newPass) {
+        if (newPass.length < 8) {
+          document.getElementById('modalMsg').textContent = 'Password must be at least 8 characters.';
+          return;
+        }
+        const salt = generateSalt();
+        s.passwordHash = await hashPassword(newPass, salt);
+        s.passwordSalt = salt;
+      } else {
+        s.passwordHash = students[i].passwordHash;
+        s.passwordSalt = students[i].passwordSalt;
+      }
+      if (editing !== reg) {
+        if (fees[editing]) { fees[reg] = fees[editing]; delete fees[editing]; }
+        marks.forEach(m => { if (m.reg === editing) m.reg = reg; });
+        Object.keys(attendance).forEach(k => {
+          if (attendance[k] && attendance[k][editing] !== undefined) {
+            attendance[k][reg] = attendance[k][editing];
+            delete attendance[k][editing];
+          }
+        });
+      }
+      students[i] = s;
+      log('Updated student ' + reg);
+    }
+  } else {
+    if (students.some(x => x.reg.toLowerCase() === reg.toLowerCase())) {
+      document.getElementById('modalMsg').textContent = 'Registration number already exists.';
+      return;
+    }
+    if (newPass) {
+      if (newPass.length < 8) {
+        document.getElementById('modalMsg').textContent = 'Password must be at least 8 characters.';
+        return;
+      }
+      const salt = generateSalt();
+      s.passwordHash = await hashPassword(newPass, salt);
+      s.passwordSalt = salt;
+    }
+    s.createdAt = new Date().toISOString();
+    students.push(s);
+    log('Added student ' + reg);
+  }
+  save();
+  closeModal();
+  refreshStudents();
+  refreshOverview();
+  toast('Student saved');
+}
+
+function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+
+function toggleBlock(r) {
+  r = decodeURIComponent(r);
+  const s = students.find(x => x.reg === r);
+  if (!s) return;
+  s.status = s.status === 'blocked' ? 'active' : 'blocked';
+  save();
+  log((s.status === 'blocked' ? 'Blocked ' : 'Unblocked ') + r);
+  refreshStudents();
+  toast(s.status === 'blocked' ? 'Student blocked' : 'Student unblocked', 'warn');
+}
+
+function deleteStudent(r) {
+  r = decodeURIComponent(r);
+  if (!confirm('Delete student ' + r + ' and related fee/marks data?')) return;
+  students = students.filter(x => x.reg !== r);
+  marks = marks.filter(m => m.reg !== r);
+  delete fees[r];
+  Object.keys(attendance).forEach(k => {
+    if (attendance[k] && attendance[k][r] !== undefined) delete attendance[k][r];
+  });
+  save();
+  log('Deleted student ' + r);
+  refreshStudents();
+  toast('Student deleted', 'err');
+}
+
+function loadStudentForm() {
+  const s = students.find(x => x.reg === currentStudent);
+  if (!s) return;
+  document.getElementById('fReg').value = s.reg;
+  document.getElementById('fRoll').value = s.roll || '';
+  document.getElementById('fName').value = s.name || '';
+  document.getElementById('fAge').value = s.age || '';
+  document.getElementById('fEmail').value = s.email || '';
+  document.getElementById('fPhone').value = s.phone || '';
+  document.getElementById('fGender').value = s.gender || 'Prefer not to say';
+  document.getElementById('fCity').value = s.city || '';
+  document.getElementById('fBlood').value = s.blood || '';
+  document.getElementById('fGuardian').value = s.guardian || '';
+  document.getElementById('fAddress').value = s.address || '';
+  fillSelects();
+  if (s.course) document.getElementById('fCourse').value = s.course;
+  if (s.sem) document.getElementById('fSem').value = s.sem;
+  updateProfilePct(s);
+}
+
+function updateProfilePct(s) {
+  const fields = ['name','roll','age','course','sem','email','phone','gender','city','address','blood','guardian'];
+  const filled = fields.filter(f => s[f] && String(s[f]).trim() && s[f] !== 'Prefer not to say').length;
+  const pct = Math.round((filled / fields.length) * 100);
+  document.getElementById('profileBar').style.width = pct + '%';
+  document.getElementById('profilePct').textContent = pct + '%';
+}
+
+function saveStudentProfile(e) {
+  e.preventDefault();
+  const s = students.find(x => x.reg === currentStudent);
+  if (!s) return;
+  if (s.status === 'blocked') {
+    document.getElementById('saveMsg').textContent = 'Account blocked — cannot update.';
+    return;
+  }
+  s.roll = document.getElementById('fRoll').value.trim();
+  s.name = document.getElementById('fName').value.trim();
+  s.age = document.getElementById('fAge').value;
+  s.course = document.getElementById('fCourse').value;
+  s.sem = document.getElementById('fSem').value;
+  s.email = document.getElementById('fEmail').value.trim();
+  s.phone = document.getElementById('fPhone').value.trim();
+  s.gender = document.getElementById('fGender').value;
+  s.city = document.getElementById('fCity').value.trim();
+  s.blood = document.getElementById('fBlood').value;
+  s.guardian = document.getElementById('fGuardian').value.trim();
+  s.address = document.getElementById('fAddress').value.trim();
+  save();
+  log('Student updated profile: ' + s.reg);
+  updateProfilePct(s);
+  document.getElementById('stuWelcome').textContent = s.name || 'Student Portal';
+  document.getElementById('saveMsg').className = 'msg ok';
+  document.getElementById('saveMsg').textContent = 'Profile saved successfully.';
+  toast('Profile updated');
+}
+
+async function changeStudentPassword() {
+  const s = students.find(x => x.reg === currentStudent);
+  if (!s) return;
+  const cur = document.getElementById('fCurPass').value;
+  const n1 = document.getElementById('fNewPass').value;
+  const n2 = document.getElementById('fNewPass2').value;
+  const msg = document.getElementById('stuPassMsg');
+  msg.className = 'msg';
+  if (s.passwordHash) {
+    const ok = await verifyPassword(cur, s.passwordHash, s.passwordSalt);
+    if (!ok) {
+      msg.textContent = 'Current password is incorrect.';
+      return;
+    }
+  } else if (s.password && s.password !== cur) {
+    msg.textContent = 'Current password is incorrect.';
+    return;
+  }
+  if (n1.length < 8) {
+    msg.textContent = 'New password must be at least 8 characters.';
+    return;
+  }
+  if (!/[A-Za-z]/.test(n1) || !/[0-9]/.test(n1)) {
+    msg.textContent = 'New password must contain letters and numbers.';
+    return;
+  }
+  if (n1 !== n2) {
+    msg.textContent = 'New passwords do not match.';
+    return;
+  }
+  const salt = generateSalt();
+  s.passwordHash = await hashPassword(n1, salt);
+  s.passwordSalt = salt;
+  delete s.password;
+  save();
+  log('Student changed password: ' + s.reg);
+  msg.className = 'msg ok';
+  msg.textContent = 'Password updated securely.';
+  document.getElementById('fCurPass').value = '';
+  document.getElementById('fNewPass').value = '';
+  document.getElementById('fNewPass2').value = '';
+  toast('Password updated');
+}
+
+function fillAttSelects() {
+  fillSelects();
+  const d = document.getElementById('attDate');
+  if (d && !d.value) d.value = new Date().toISOString().slice(0, 10);
+}
+
+function attKey(course, sem, date) {
+  return course + '|' + sem + '|' + date;
+}
+
+function loadAttendanceSheet() {
+  const course = document.getElementById('attCourse').value;
+  const sem = document.getElementById('attSem').value;
+  const date = document.getElementById('attDate').value;
+  if (!course || !sem || !date) return;
+
+  const list = students.filter(s => s.course === course && s.sem === sem && s.status !== 'blocked');
+  const key = attKey(course, sem, date);
+  const day = attendance[key] || {};
+
+  const tbody = document.getElementById('attTable');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">No active students for this course/semester</td></tr>';
+    document.getElementById('attHint').textContent = '';
+    return;
+  }
+  tbody.innerHTML = list.map(s => {
+    const pct = calcAttendancePct(s.reg, course, sem);
+    return `<tr>
+      <td>${esc(s.reg)}</td>
+      <td>${esc(s.name || '—')}</td>
+      <td><input type="checkbox" data-reg="${esc(s.reg)}" ${day[s.reg] === false ? '' : 'checked'}></td>
+      <td>${pct}%</td>
+    </tr>`;
+  }).join('');
+  const saved = Object.keys(day).length > 0;
+  document.getElementById('attHint').textContent = list.length + ' students • ' + date + (saved ? ' • previously saved' : ' • new day (defaults present — uncheck absentees)');
+}
+
+function markAllPresent() {
+  document.querySelectorAll('#attTable input[type=checkbox]').forEach(c => c.checked = true);
+}
+
+function saveAttendanceSheet() {
+  const course = document.getElementById('attCourse').value;
+  const sem = document.getElementById('attSem').value;
+  const date = document.getElementById('attDate').value;
+  if (!date) { toast('Select a date', 'err'); return; }
+  const key = attKey(course, sem, date);
+  const day = {};
+  document.querySelectorAll('#attTable input[type=checkbox]').forEach(c => {
+    day[c.dataset.reg] = c.checked;
+  });
+  attendance[key] = day;
+  save();
+  log('Attendance saved: ' + course + ' / ' + sem + ' / ' + date);
+  loadAttendanceSheet();
+  toast('Attendance saved');
+}
+
+function calcAttendancePct(reg, course, sem) {
+  let total = 0, present = 0;
+  Object.keys(attendance).forEach(k => {
+    if (!k.startsWith(course + '|' + sem + '|')) return;
+    if (attendance[k][reg] === undefined) return;
+    total++;
+    if (attendance[k][reg]) present++;
+  });
+  if (!total) return '—';
+  return Math.round((present / total) * 100);
+}
+
+function renderStudentAttendance() {
+  const s = students.find(x => x.reg === currentStudent);
+  if (!s) return;
+  const rows = [];
+  let present = 0, total = 0;
+  Object.keys(attendance).sort().reverse().forEach(k => {
+    const parts = k.split('|');
+    if (parts[0] !== s.course || parts[1] !== s.sem) return;
+    if (attendance[k][s.reg] === undefined) return;
+    total++;
+    const ok = attendance[k][s.reg];
+    if (ok) present++;
+    rows.push(`<tr><td>${esc(parts[2])}</td><td><span class="badge ${ok ? 'active' : 'blocked'}">${ok ? 'Present' : 'Absent'}</span></td></tr>`);
+  });
+  const pct = total ? Math.round((present / total) * 100) : 0;
+  document.getElementById('stuAttSummary').innerHTML = `
+    <div class="stat"><small>PRESENT</small><b>${present}</b></div>
+    <div class="stat"><small>TOTAL DAYS</small><b>${total}</b></div>
+    <div class="stat"><small>PERCENTAGE</small><b>${total ? pct + '%' : '—'}</b></div>
+  `;
+  document.getElementById('stuAttTable').innerHTML = rows.length ? rows.join('') : '<tr><td colspan="2" class="empty">No attendance records yet</td></tr>';
+}
+
+function fillMarksSelects() { fillSelects(); }
+
+function openMarksModal() {
+  const sel = document.getElementById('mkStudent');
+  sel.innerHTML = students.filter(s => s.status !== 'blocked').map(s =>
+    `<option value="${esc(s.reg)}">${esc(s.reg)} — ${esc(s.name || 'Unnamed')}</option>`
+  ).join('');
+  document.getElementById('mkSubject').value = '';
+  document.getElementById('mkObtained').value = '';
+  document.getElementById('mkMax').value = '100';
+  document.getElementById('mkTerm').value = '';
+  document.getElementById('mkMsg').textContent = '';
+  document.getElementById('marksModal').classList.remove('hidden');
+}
+
+function closeMarksModal() { document.getElementById('marksModal').classList.add('hidden'); }
+
+function saveMarks() {
+  const reg = document.getElementById('mkStudent').value;
+  const subject = document.getElementById('mkSubject').value.trim();
+  const obtained = parseFloat(document.getElementById('mkObtained').value);
+  const max = parseFloat(document.getElementById('mkMax').value) || 100;
+  const term = document.getElementById('mkTerm').value.trim();
+  if (!subject || isNaN(obtained)) {
+    document.getElementById('mkMsg').textContent = 'Subject and marks are required.';
+    return;
+  }
+  const entry = { id: Date.now().toString(36), reg, subject, obtained, max, term, at: new Date().toISOString() };
+  marks.push(entry);
+  save();
+  log('Marks added: ' + reg + ' / ' + subject);
+  closeMarksModal();
+  refreshMarksTable();
+  toast('Marks saved');
+}
+
+function refreshMarksTable() {
+  const course = document.getElementById('marksCourse')?.value || '';
+  const sem = document.getElementById('marksSem')?.value || '';
+  const q = (document.getElementById('marksSearch')?.value || '').toLowerCase();
+  let list = marks.slice().reverse();
+  if (course || sem) {
+    const regs = new Set(students.filter(s => (!course || s.course === course) && (!sem || s.sem === sem)).map(s => s.reg));
+    list = list.filter(m => regs.has(m.reg));
+  }
+  if (q) {
+    list = list.filter(m => {
+      const s = students.find(x => x.reg === m.reg);
+      return (m.reg + ' ' + (s?.name || '') + ' ' + m.subject).toLowerCase().includes(q);
+    });
+  }
+  const tbody = document.getElementById('marksTable');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">No marks recorded</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(m => {
+    const s = students.find(x => x.reg === m.reg);
+    const pct = m.max ? Math.round((m.obtained / m.max) * 100) : 0;
+    return `<tr>
+      <td>${esc(m.reg)}</td>
+      <td>${esc(s?.name || '—')}</td>
+      <td>${esc(m.subject)}${m.term ? ' <small style="color:#5a7090">(' + esc(m.term) + ')</small>' : ''}</td>
+      <td>${m.obtained}</td>
+      <td>${m.max}</td>
+      <td>${pct}%</td>
+      <td><b>${gradeOf(pct)}</b></td>
+      <td><button class="btn danger sm" onclick="deleteMark('${m.id}')">Del</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteMark(id) {
+  if (!confirm('Delete this mark entry?')) return;
+  marks = marks.filter(m => m.id !== id);
+  save();
+  refreshMarksTable();
+  toast('Mark entry deleted', 'warn');
+}
+
+function renderStudentMarks() {
+  const list = marks.filter(m => m.reg === currentStudent).reverse();
+  const tbody = document.getElementById('stuMarksTable');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No marks yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(m => {
+    const pct = m.max ? Math.round((m.obtained / m.max) * 100) : 0;
+    return `<tr><td>${esc(m.subject)}${m.term ? ' <small>(' + esc(m.term) + ')</small>' : ''}</td><td>${m.obtained}</td><td>${m.max}</td><td>${pct}%</td><td><b>${gradeOf(pct)}</b></td></tr>`;
+  }).join('');
+}
+
+function refreshFeesTable() {
+  const q = (document.getElementById('feeSearch')?.value || '').toLowerCase();
+  const st = document.getElementById('feeFilter')?.value || '';
+  let list = students.slice();
+  if (q) list = list.filter(s => (s.reg + ' ' + s.name).toLowerCase().includes(q));
+  if (st) list = list.filter(s => (fees[s.reg]?.status || 'pending') === st);
+
+  const tbody = document.getElementById('feesTable');
+  tbody.innerHTML = list.map(s => {
+    const f = fees[s.reg] || { amount: 0, status: 'pending', due: '' };
+    return `<tr>
+      <td>${esc(s.reg)}</td>
+      <td>${esc(s.name || '—')}</td>
+      <td>${esc(s.course || '—')}</td>
+      <td>₹ ${Number(f.amount || 0).toLocaleString('en-IN')}</td>
+      <td><span class="badge ${f.status || 'pending'}">${f.status || 'pending'}</span></td>
+      <td>${esc(f.due || '—')}</td>
+      <td><button class="btn secondary sm" onclick="openFeeEdit('${encodeURIComponent(s.reg)}')">Edit</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" class="empty">No students</td></tr>';
+}
+
+function openFeeEdit(r) {
+  r = decodeURIComponent(r);
+  feeEditReg = r;
+  const s = students.find(x => x.reg === r);
+  const f = fees[r] || { amount: 25000, status: 'pending', due: '' };
+  document.getElementById('feeStuName').textContent = (s?.name || r) + ' (' + r + ')';
+  document.getElementById('feeAmount').value = f.amount || 0;
+  document.getElementById('feeStatus').value = f.status || 'pending';
+  document.getElementById('feeDue').value = f.due || '';
+  document.getElementById('feeModal').classList.remove('hidden');
+}
+
+function closeFeeModal() { document.getElementById('feeModal').classList.add('hidden'); feeEditReg = null; }
+
+function saveFee() {
+  if (!feeEditReg) return;
+  fees[feeEditReg] = {
+    amount: parseFloat(document.getElementById('feeAmount').value) || 0,
+    status: document.getElementById('feeStatus').value,
+    due: document.getElementById('feeDue').value
+  };
+  save();
+  log('Fee updated: ' + feeEditReg + ' → ' + fees[feeEditReg].status);
+  closeFeeModal();
+  refreshFeesTable();
+  toast('Fee record updated');
+}
+
+function renderStudentFees() {
+  const f = fees[currentStudent] || { amount: 0, status: 'pending', due: '' };
+  document.getElementById('stuFeeCard').innerHTML = `
+    <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat"><small>AMOUNT</small><b style="font-size:20px">₹ ${Number(f.amount || 0).toLocaleString('en-IN')}</b></div>
+      <div class="stat"><small>STATUS</small><b style="font-size:18px"><span class="badge ${f.status || 'pending'}">${f.status || 'pending'}</span></b></div>
+      <div class="stat"><small>DUE DATE</small><b style="font-size:16px">${esc(f.due || 'Not set')}</b></div>
+    </div>
+    <p style="color:var(--muted);font-size:14px;margin-top:16px">Contact the accounts office for payment details. Status is updated by faculty.</p>
+  `;
+}
+
+function publishNotice() {
+  const title = document.getElementById('noticeTitle').value.trim();
+  const body = document.getElementById('noticeBody').value.trim();
+  if (!title || !body) { toast('Title and message required', 'err'); return; }
+  notices.unshift({ id: Date.now().toString(36), title, body, at: new Date().toISOString() });
+  save();
+  log('Notice published: ' + title);
+  clearNoticeForm();
+  renderNotices();
+  toast('Notice published');
+}
+
+function clearNoticeForm() {
+  document.getElementById('noticeTitle').value = '';
+  document.getElementById('noticeBody').value = '';
+}
+
+function renderNotices() {
+  const el = document.getElementById('noticeList');
+  if (!notices.length) {
+    el.innerHTML = '<div class="empty">No notices yet</div>';
+    return;
+  }
+  el.innerHTML = notices.map(n => `
+    <div class="notice-card">
+      <h4>${esc(n.title)}</h4>
+      <p>${esc(n.body)}</p>
+      <div class="meta">${new Date(n.at).toLocaleString()}
+        <button class="btn danger sm" style="float:right" onclick="deleteNotice('${n.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteNotice(id) {
+  if (!confirm('Delete this notice?')) return;
+  notices = notices.filter(n => n.id !== id);
+  save();
+  renderNotices();
+  toast('Notice deleted', 'warn');
+}
+
+function renderStudentNotices() {
+  const el = document.getElementById('stuNoticeList');
+  if (!notices.length) {
+    el.innerHTML = '<div class="empty panel">No notices at the moment</div>';
+    return;
+  }
+  el.innerHTML = notices.map(n => `
+    <div class="notice-card">
+      <h4>${esc(n.title)}</h4>
+      <p>${esc(n.body)}</p>
+      <div class="meta">${new Date(n.at).toLocaleString()}</div>
+    </div>
+  `).join('');
+}
+
+function addCourse() {
+  const n = document.getElementById('newCourse').value.trim();
+  if (!n) return;
+  if (courses.includes(n)) { toast('Course already exists', 'warn'); return; }
+  courses.push(n);
+  save();
+  document.getElementById('newCourse').value = '';
+  fillSelects();
+  renderCourses();
+  log('Course added: ' + n);
+  toast('Course added');
+}
+
+function renameCourse(i) {
+  const n = prompt('New course name:', courses[i]);
+  if (n && n.trim()) {
+    const old = courses[i];
+    courses[i] = n.trim();
+    students.forEach(s => { if (s.course === old) s.course = n.trim(); });
+    save();
+    fillSelects();
+    renderCourses();
+    log('Course renamed: ' + old + ' → ' + n.trim());
+  }
+}
+
+function removeCourse(i) {
+  if (!confirm('Delete course "' + courses[i] + '"?')) return;
+  const name = courses[i];
+  courses.splice(i, 1);
+  save();
+  fillSelects();
+  renderCourses();
+  log('Course removed: ' + name);
+  toast('Course removed', 'warn');
+}
+
+function renderCourses() {
+  const e = document.getElementById('courseList');
+  if (!e) return;
+  e.innerHTML = courses.map((c, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span>${esc(c)}</span>
+      <span>
+        <button class="btn secondary sm" onclick="renameCourse(${i})">Rename</button>
+        <button class="btn danger sm" onclick="removeCourse(${i})">Delete</button>
+      </span>
+    </div>
+  `).join('');
+}
+
+function renderFullLog() {
+  const el = document.getElementById('fullLog');
+  el.innerHTML = activity.length
+    ? activity.map(a => `<div class="log-item"><span class="time">${new Date(a.t).toLocaleString()}</span><span class="act">${esc(a.msg)}</span></div>`).join('')
+    : '<div class="empty">No activity recorded</div>';
+}
+
+function clearActivityLog() {
+  if (!confirm('Clear activity log?')) return;
+  activity = [];
+  save();
+  renderFullLog();
+  toast('Activity log cleared');
+}
+
+function refreshBackupUI() {
+  document.getElementById('bkStudents').textContent = students.length;
+  const bak = readJSON(KEYS.backup, null);
+  document.getElementById('bkTime').textContent = bak?.savedAt ? new Date(bak.savedAt).toLocaleString() : '—';
+  const slots = readJSON(KEYS.slots, []);
+  document.getElementById('bkSlots').textContent = slots.length;
+  document.getElementById('slotList').innerHTML = slots.length
+    ? slots.map((s, i) => `<div class="log-item"><span class="time">${new Date(s.at).toLocaleString()}</span><span class="act">${s.count} students ${i === 0 ? '(latest recovery snapshot)' : ''}</span></div>`).join('')
+    : '<div class="empty">No recovery slots yet — data will appear after first save</div>';
+}
+
+function downloadBackup() {
+  save();
+  const data = {
+    ...snapshot(),
+    app: 'NEXUS CYBER CMS',
+    version: 3
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'nexus-cyber-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  log('Full backup downloaded (hashes excluded)');
+  toast('Secure backup downloaded');
+}
+
+function restoreBackupFile(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data.students) || !Array.isArray(data.courses)) throw new Error('Invalid');
+      if (!confirm('Restore will REPLACE all current data. Continue?')) { input.value = ''; return; }
+      students = data.students;
+      courses = data.courses;
+      attendance = data.attendance || {};
+      marks = data.marks || [];
+      fees = data.fees || {};
+      notices = data.notices || [];
+      if (Array.isArray(data.activity)) activity = data.activity;
+      if (data.settings) {
+        if (data.settings.regPrefix) settings.regPrefix = data.settings.regPrefix;
+        if (data.settings.year) settings.year = data.settings.year;
+      }
+      for (const s of students) {
+        if (s.password) delete s.password;
+      }
+      if (data.settings && data.settings.password) delete data.settings.password;
+      save();
+      fillSelects();
+      refreshOverview();
+      log('Backup restored from file (hashes preserved if present, plaintext stripped)');
+      toast('Backup restored successfully');
+      refreshBackupUI();
+    } catch (e) {
+      toast('Invalid NEXUS backup file', 'err');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+async function changePassword() {
+  const cur = document.getElementById('curPass').value;
+  const n1 = document.getElementById('newPass').value;
+  const n2 = document.getElementById('newPass2').value;
+  const msg = document.getElementById('passMsg');
+  msg.className = 'msg';
+  if (!cur) { msg.textContent = 'Current password is required.'; return; }
+  const ok = await verifyPassword(cur, settings.passwordHash, settings.passwordSalt);
+  if (!ok) { msg.textContent = 'Current password is wrong.'; return; }
+  if (n1.length < 8) { msg.textContent = 'New password must be at least 8 characters.'; return; }
+  if (!/[A-Za-z]/.test(n1) || !/[0-9]/.test(n1)) {
+    msg.textContent = 'New password must contain letters and numbers.';
+    return;
+  }
+  if (n1 !== n2) { msg.textContent = 'New passwords do not match.'; return; }
+  if (n1 === 'admin123') { msg.textContent = 'Cannot reuse the default password.'; return; }
+  await setAdminPassword(n1);
+  settings.mustChangePassword = false;
+  save();
+  log('Admin password changed');
+  msg.className = 'msg ok';
+  msg.textContent = 'Password updated securely (hashed).';
+  document.getElementById('curPass').value = '';
+  document.getElementById('newPass').value = '';
+  document.getElementById('newPass2').value = '';
+  toast('Password changed');
+}
+
+function saveRegPrefix() {
+  settings.regPrefix = document.getElementById('regPrefix').value.trim() || 'NEXUS';
+  save();
+  toast('Registration prefix saved');
+}
+
+async function wipeAllData() {
+  if (!confirm('This will erase ALL local NEXUS data. Are you sure?')) return;
+  if (!confirm('Final confirmation: download a backup first if needed. Proceed to wipe?')) return;
+  Object.values(KEYS).forEach(k => localStorage.removeItem(k));
+  students = []; courses = DEFAULT_COURSES.slice(); attendance = {}; marks = []; fees = {}; notices = []; activity = [];
+  settings = { ...DEFAULT_SETTINGS };
+  await initDefaultAdminIfNeeded();
+  settings.mustChangePassword = true;
+  save();
+  log('All data wiped');
+  toast('All local data wiped', 'err');
+  refreshOverview();
+  refreshBackupUI();
+}
+
+function exportCSV() {
+  const rows = [['Registration','Roll','Name','Age','Course','Semester','Email','Phone','Gender','City','Blood','Guardian','Address','Status']];
+  students.forEach(s => rows.push([s.reg,s.roll,s.name,s.age,s.course,s.sem,s.email,s.phone,s.gender,s.city,s.blood,s.guardian,s.address,s.status]));
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'nexus-students.csv';
+  a.click();
+  toast('CSV exported');
+}
+
+function importCSV(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const lines = reader.result.split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) throw new Error('Empty');
+      let added = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].match(/("([^"]|"")*"|[^,]*)/g).map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
+        const reg = (cols[0] || '').trim();
+        if (!reg) continue;
+        if (students.some(s => s.reg.toLowerCase() === reg.toLowerCase())) continue;
+        students.push({
+          reg, roll: cols[1] || '', name: cols[2] || '', age: cols[3] || '',
+          course: cols[4] || courses[0], sem: cols[5] || SEMESTERS[0],
+          email: cols[6] || '', phone: cols[7] || '', gender: cols[8] || 'Prefer not to say',
+          city: cols[9] || '', blood: cols[10] || '', guardian: cols[11] || '',
+          address: cols[12] || '', status: cols[13] || 'active',
+          createdAt: new Date().toISOString()
+        });
+        added++;
+      }
+      save();
+      refreshStudents();
+      log('CSV import: ' + added + ' students added');
+      toast('Imported ' + added + ' new students');
+    } catch (e) {
+      toast('Could not parse CSV', 'err');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+async function seedDemoData() {
+  if (students.length && !confirm('Inject demo students into existing data?')) return;
+  const demoPass = 'student123';
+  const base = [
+    { reg: 'NEXUS2026001', roll: '001', name: 'Aarav Sharma', age: 19, course: 'BCA', sem: 'Semester 3', email: 'aarav@college.edu', phone: '9876543210', status: 'active', gender: 'Male', city: 'Delhi', blood: 'B+', guardian: 'R. Sharma', address: 'North Campus' },
+    { reg: 'NEXUS2026002', roll: '002', name: 'Diya Patel', age: 20, course: 'BBA', sem: 'Semester 4', email: 'diya@college.edu', phone: '9876543211', status: 'active', gender: 'Female', city: 'Ahmedabad', blood: 'O+', guardian: 'K. Patel', address: 'Hostel B' },
+    { reg: 'NEXUS2026003', roll: '003', name: 'Kabir Singh', age: 21, course: 'BCA', sem: 'Semester 5', email: 'kabir@college.edu', phone: '9876543212', status: 'active', gender: 'Male', city: 'Chandigarh', blood: 'A+', guardian: 'S. Singh', address: 'Sector 17' },
+    { reg: 'NEXUS2026004', roll: '004', name: 'Ananya Reddy', age: 18, course: 'B.Sc', sem: 'Semester 1', email: 'ananya@college.edu', phone: '9876543213', status: 'active', gender: 'Female', city: 'Hyderabad', blood: 'AB+', guardian: 'M. Reddy', address: 'Gachibowli' },
+    { reg: 'NEXUS2026005', roll: '005', name: 'Rohan Mehta', age: 22, course: 'B.Com', sem: 'Semester 6', email: 'rohan@college.edu', phone: '9876543214', status: 'blocked', gender: 'Male', city: 'Mumbai', blood: 'O-', guardian: 'P. Mehta', address: 'Andheri' }
+  ];
+  let added = 0;
+  for (const d of base) {
+    if (students.some(s => s.reg === d.reg)) continue;
+    const salt = generateSalt();
+    const hash = await hashPassword(demoPass, salt);
+    students.push({ ...d, passwordHash: hash, passwordSalt: salt, createdAt: new Date().toISOString() });
+    fees[d.reg] = { amount: 25000 + Math.floor(Math.random() * 10000), status: d.status === 'blocked' ? 'overdue' : (Math.random() > 0.4 ? 'paid' : 'pending'), due: '2026-12-31' };
+    added++;
+  }
+  if (!notices.length) {
+    notices.push({ id: 'demo1', title: 'Welcome to NEXUS CYBER', body: 'Neural campus grid online. Faculty can publish real announcements that students see instantly.', at: new Date().toISOString() });
+    notices.push({ id: 'demo2', title: 'Mid-semester exams', body: 'Exam schedule will be published next week. Ensure fee clearance before hall ticket generation.', at: new Date().toISOString() });
+  }
+  save();
+  log('Demo data loaded (' + added + ' students)');
+  refreshOverview();
+  refreshStudents();
+  toast('Demo grid ready (' + added + ' new). Login: any demo reg + student123');
+}
+
+async function restoreUIState() {
+  // Always land on the front page. A saved faculty session used to
+  // reopen the teacher console and hide the directorate/home screen.
+  clearUIState();
+  currentStudent = null;
+  show('home', false);
+}
+
+(async function initNexus() {
+  await loadAll();
+  fillSelects();
+  await restoreUIState();
+  window.addEventListener('beforeunload', save);
+  window.addEventListener('pagehide', save);
+})();
+</script>
+</body>
+</html>
